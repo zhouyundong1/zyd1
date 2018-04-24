@@ -1,0 +1,59 @@
+<div id="user">
+    <el-table :data="tableData5" style="width: 100%">
+        <el-table-column>
+            <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                    <el-form-item label="照片">
+                        <img :src="props.row.photo" alt="">
+                    </el-form-item>
+                    <el-form-item label="姓名">
+                        <span>{{ props.row.username }}</span>
+                    </el-form-item>
+                    <el-form-item label="id">
+                        <span>{{ props.row.id }}</span>
+                    </el-form-item>
+                    <el-form-item label="邮箱">
+                        <span>{{ props.row.email }}</span>
+                    </el-form-item>
+                    
+                    <el-form-item label="手机号">
+                        <span>{{ props.row.phone }}</span>
+                    </el-form-item>
+                    <el-form-item label="性别">
+                        <span>{{ props.row.sex }}</span>
+                    </el-form-item>
+                </el-form>
+            </template>
+        </el-table-column>
+    </el-table>
+</div>
+<script>
+    new Vue({
+        el:"#user",
+        data:{
+            tableData5:[]
+        },
+        created(){
+            $.get('/user/getid',result=>{
+                if(result.error==0){
+                    this.tableData5=result.data
+                    console.log(this.tableData5)
+                }
+            })
+        }
+    })
+</script>
+<style>
+    .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+</style>

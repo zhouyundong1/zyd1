@@ -1,0 +1,119 @@
+<div id="paperAdd">
+	<h2>编辑</h2>
+	<div class="content">
+		<el-card class="cleft">
+			<el-tree node-key="id" ref="tree" show-checkbox default-expand-all :data="outline" :props="defaultProps" @check-change="selectNode" ></el-tree>
+		</el-card>
+		<div class="cright">
+			<el-card style="margin:5px" v-for="(item,index) in papers.content" :key="'papers_'+index" :header="item.text">
+				<el-radio-group>
+					<el-radio v-for="(i,index) in papers.item" :key="'item_'+index" :label="i.id">{{i.text}}</el-radio>
+				</el-radio-group>	
+			</el-card>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<el-button @click="dgShow = false">取 消</el-button>
+		<el-button type="primary" @click="saveQues">确 定</el-button>
+	</div>
+</div>
+
+<script>
+	new Vue({
+		el: '#paperAdd',
+		created: function () {
+			var _this = this
+			$.get('/outline', function (result) {
+				if (result.error == 0) {
+					_this.outline = result.data
+				}
+			})
+			$.get('/papers/find',{id:Cookies.get('paper_id')}, function (result) {
+				if (result.error != 0) {return}
+				console.log(result.data)
+				_this.$refs.tree.setCheckedNodes(JSON.parse(result.data.content));
+				_this.papers.title=result.data.title
+				_this.papers.id=result.data.id
+			})
+		},
+		methods:{
+			saveQues:function () {
+                var _this = this
+                this.$prompt('请输入问卷标题', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputPattern: /^.+?/,
+                    inputErrorMessage: '标题不能为空',
+                    inputValue: _this.papers.title,
+                    callback: function (action, obj) {
+                        //action != 'confirm' 表示用户取消,return终止运行
+                        if (action == 'confirm')
+                        _this.papers.title = obj.inputValue
+                        //将输入传给后台
+                        $.post('/papers/edit', {
+                            id: _this.papers.id,   //需要编辑的id
+                            title: _this.papers.title,
+                            content: JSON.stringify(_this.papers.content),   //需要编辑的内容
+                            item:JSON.stringify(_this.papers.item)
+                        }, function (result) {
+                            _this.$message({
+                                type:'success',
+                                message:'编辑成功'
+                            })
+                            indexVm.loadPage('/menu/papers.html')
+                        })
+                    }
+                })
+            },
+			selectNode:function(data,isSelect){
+				if(data.children.length==0){
+					if(isSelect){
+						this.papers.content.push(data)
+					}else{
+						var index = this.papers.content.indexOf(data)
+						this.papers.content.splice(index,1)
+					}
+				}
+			}
+		},
+		data: function () {
+			return {
+				dgShow: false,
+				paperData: [],
+				papers:{
+					titel:'',
+					content:[],
+					item:[
+						{id:1,text:'优秀',val:5},
+						{id:2,text:'良好',val:4},
+						{id:3,text:'中等',val:3},
+						{id:4,text:'很差',val:2},
+					]
+				},
+				outline: [],
+				defaultProps: {
+					children: 'children',
+					label: 'text'
+				},
+				paperData: [],
+				
+			}
+		}
+	})
+</script>
+
+<style>
+	*{
+		box-sizing: border-box;
+	}
+	.content {
+		overflow: hidden;
+	}
+
+	.content>div {
+		float: left;
+	}
+
+
+</style>

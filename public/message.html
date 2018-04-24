@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/vue.js"></script>
+  <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
+  <style>
+    * {
+      padding: 0px;
+      margin: 0px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .h1 {
+      font-size: 1.8rem;
+      /* margin: 1rem 0; */
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .h2{
+      font-size: 1.5rem;      
+    }
+
+    a {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    a:hover {
+      color: rgba(0, 0, 0, 0.8);
+    }
+
+    #container {
+      width: 600px;
+      margin: 2rem auto 0 auto;
+      padding: 2rem 1.5rem;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+
+      text-align: center;
+    }
+
+    .message {
+      padding: 10px;
+    }
+
+    .message a,
+    .message p {
+      line-height: 40px;
+    }
+    
+    .success {
+      color: rgba(64, 158, 255, 1);
+    }
+
+    .error {
+      color: rgba(240, 131, 28, 1);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <div class="h1">
+      <img src="/img/logo.png" alt="">问卷系统
+    </div>
+    <div class="message" :class="message.status">
+      <p class="h2">{{message.msg}}</p>
+      <p>
+        <a :href="message.link">{{message.linkText}}</a>
+      </p>
+    </div>
+  </div>
+  <script>
+    var vm = new Vue({
+      el: '#container',
+      created: function () {
+        this.message = Cookies.getJSON('message')
+      },
+      data: function () {
+        return {
+          message: {}
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
